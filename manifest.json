@@ -78,13 +78,12 @@
 	    "devServer" : {
 			"disableHostCheck" : true, // 开启可以用自己的域名
 	        "proxy" : {
-	            // 与vue中的proxyTable配置大致上一致,此处我同时代理了两个
-	            "/api" : {
+	            "/prod-api" : {
 	                "target" : "http://139.9.123.100:9529/prod-api",
 	                "changeOrigin" : true, // 是否跨域
 	                "secure" : false, // 设置支持https协议的代理
 	                "pathRewrite" : {
-	                    "^/api" : ""
+	                    "^/prod-api" : ""
 	                } // 这个一定要加,意思就是把你项目中一dev开头的接口自动替换为 target + pathRewrite第二个参数来进行数据的请求(pathRewrite没有第二个参数的话直接为target)
 	            }
 	        }
