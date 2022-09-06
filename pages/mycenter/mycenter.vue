@@ -1,5 +1,5 @@
 <template>
-	<view class="page"><u-button @click="submit" type="primary" color="#0ab99c" class="logoutBtn" text="退出登录"></u-button></view>
+	<view class="page"><u-button @click="logout" type="primary" color="#0ab99c" class="logoutBtn" text="退出登录"></u-button></view>
 </template>
 
 <script>
@@ -7,7 +7,18 @@ export default {
 	data() {
 		return {};
 	},
-	methods: {}
+	methods: {
+		logout(){
+			uni.clearStorageSync("admin-token");
+			uni.showToast({
+				title: '退出登录成功',
+				icon: 'none'
+			})
+			uni.navigateTo({
+				url:'/pages/login/login'
+			})
+		}
+	}
 };
 </script>
 
