@@ -1,7 +1,7 @@
 {
     "name" : "tc-log",
-    "appid" : "",
-    "description" : "",
+    "appid" : "__UNI__5183B85",
+    "description" : "牛马日志系统",
     "versionName" : "1.0.0",
     "versionCode" : "100",
     "transformPx" : false,
@@ -11,8 +11,8 @@
         "nvueStyleCompiler" : "uni-app",
         "compilerVersion" : 3,
         "splashscreen" : {
-            "alwaysShowBeforeRender" : true,
-            "waiting" : true,
+            "alwaysShowBeforeRender" : false,
+            "waiting" : false,
             "autoclose" : true,
             "delay" : 0
         },
@@ -41,9 +41,16 @@
                 ]
             },
             /* ios打包配置 */
-            "ios" : {},
+            "ios" : {
+                "dSYMs" : false
+            },
             /* SDK配置 */
-            "sdkConfigs" : {}
+            "sdkConfigs" : {
+                "ad" : {}
+            },
+            "splashscreen" : {
+                "androidStyle" : "common"
+            }
         }
     },
     /* 快应用特有相关 */
@@ -69,24 +76,25 @@
         "enable" : false
     },
     "vueVersion" : "2",
-	"h5" : {
-	    "title" : "牛马日志系统",
-	    "router" : {
-	        "mode" : "history",
-	        "base" : "/h5"
-	    },
-	    "devServer" : {
-			"disableHostCheck" : true, // 开启可以用自己的域名
-	        "proxy" : {
-	            "/prod-api" : {
-	                "target" : "http://139.9.123.100:9529/prod-api",
-	                "changeOrigin" : true, // 是否跨域
-	                "secure" : false, // 设置支持https协议的代理
-	                "pathRewrite" : {
-	                    "^/prod-api" : ""
-	                } // 这个一定要加,意思就是把你项目中一dev开头的接口自动替换为 target + pathRewrite第二个参数来进行数据的请求(pathRewrite没有第二个参数的话直接为target)
-	            }
-	        }
-	    }
-	}
+    "h5" : {
+        "title" : "牛马日志系统",
+        "router" : {
+            "mode" : "history",
+            "base" : "/h5"
+        },
+        "devServer" : {
+            "disableHostCheck" : true, // 开启可以用自己的域名
+            "proxy" : {
+                "/prod-api" : {
+                    "target" : "http://139.9.123.100:9529/prod-api",
+                    "changeOrigin" : true, // 是否跨域
+                    "secure" : false, // 设置支持https协议的代理
+                    "pathRewrite" : {
+                        "^/prod-api" : ""
+                    } // 这个一定要加,意思就是把你项目中一dev开头的接口自动替换为 target + pathRewrite第二个参数来进行数据的请求(pathRewrite没有第二个参数的话直接为target)
+                }
+            }
+        }
+    },
+    "fallbackLocale" : "zh-Hans"
 }

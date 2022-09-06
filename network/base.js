@@ -4,8 +4,20 @@ let showHttpLog = true;
 // 测试环境
 // baseURL = 'http://139.9.123.100:9529/prod-api';
 // baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:8080/api' : 'http://139.9.123.100:9529/prod-api'
+// #ifdef H5
 baseUrl = process.env.NODE_ENV === 'development' ? '/api' : 'http://139.9.123.100:9529'
+// #endif
 
+// #ifndef H5
+baseURL = 'http://139.9.123.100:9529';
+// #endif
+
+// // #ifdef MP-WEIXIN
+// baseURL = 'http://139.9.123.100:9529';
+// // #endif
+// // #ifdef APP
+// baseURL = 'http://139.9.123.100:9529';
+// // #endif
 // 正式环境
 // baseURL = 'XXXXX.XXXXX.com';
 module.exports = {

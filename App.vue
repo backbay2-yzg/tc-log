@@ -7,10 +7,6 @@
 				uni.switchTab({
 					url:'/pages/writelog/writelog'
 				})
-			}else{
-				uni.navigateTo({
-					url:'/pages/login/login'
-				})
 			}
 		},
 		onShow: function() {

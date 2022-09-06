@@ -4,7 +4,10 @@ import {
 import {
 	ACCESS_TOKEN,
 	httpContentType,
-} from '@/common/constants.js'
+} from '@/common/constants.js';
+import {
+	login
+} from '@/api/login.js'
 
 export const tokenRequest = (options) => {
 	return new Promise((resolve, reject) => {
@@ -18,14 +21,31 @@ export const tokenRequest = (options) => {
 			},
 			success: (res) => {
 				//返回的数据（不固定，看后端接口，这里是做了一个判断，如果不为true，用uni.showToast方法提示获取数据失败)
-				// if (res.data.success != true) {
-				// 	return uni.showToast({
-				// 		title: '获取数据失败',
-				// 		icon: 'none'
-				// 	})
-				// }
-				// 如果不满足上述判断就输出数据
-				resolve(res)
+				if (res.data.code === 401) {
+					let userInfo = JSON.parse(uni.getStorageSync("userInfo"));
+					if (userInfo) {
+						login(userInfo).then(res => {
+							let token = res.data.token;
+							uni.setStorageSync("admin-token", token)
+							uni.showToast({
+								title: '重新登录成功',
+								icon: 'none'
+							})
+						})
+					}else{
+						uni.showToast({
+							title: '需要重新登录刷新token',
+							icon: 'none'
+						})
+					}
+				} else if (res.data.code === 200) {
+					resolve(res)
+				} else {
+					uni.showToast({
+						title: '获取数据失败',
+						icon: 'none'
+					})
+				}
 			},
 			// 这里的接口请求，如果出现问题就输出接口请求失败
 			fail: (err) => {

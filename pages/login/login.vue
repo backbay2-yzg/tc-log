@@ -1,5 +1,5 @@
 <template>
-	<view>
+	<view class="login-box">
 		<view style="text-align:center;">
 			<image :src="avatar" mode='aspectFit' class="login-logo"></image>
 			<view class="login-title text-shadow">牛马日志系统 </view>
@@ -17,8 +17,6 @@
 		<u-button class="form-btn" :loading="isLogining" type="primary" shape="square" @click="loginTc">
 			{{isLogining ? '' : '登 录'}}
 		</u-button>
-
-
 	</view>
 </template>
 
@@ -32,8 +30,8 @@
 				avatar: 'http://139.9.123.100:9529/static/img/logo.21e635a2.png',
 				isLogining: false,
 				form: {
-					username: 'Roy you',
-					password: '123456',
+					username: '',
+					password: '',
 					rememberMe: false
 				},
 				rules: {
@@ -53,6 +51,13 @@
 				}
 			}
 		},
+		onLoad() {
+			let userInfo = uni.getStorageSync("userInfo");
+			if(userInfo){
+				this.form.username = userInfo.username;
+				this.form.password = userInfo.password;
+			}
+		},
 		onReady() {
 					// 如果需要兼容微信小程序，并且校验规则中含有方法等，只能通过setRules方法设置规则
 					this.$refs.uForm.setRules(this.rules)
@@ -67,6 +72,10 @@
 						login(this.form).then(res => {
 							console.log('res' + JSON.stringify(res));
 							if(res.data.code == 200){
+								let userInfo = {};
+								userInfo.username = this.form.username;
+								userInfo.password = this.form.password;
+								uni.setStorageSync("userInfo",userInfo)
 								let token = res.data.token;
 								uni.setStorageSync("admin-token",token)
 						
@@ -91,17 +100,21 @@
 
 <style lang="scss" scoped>
 	.login-box {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
 		text-align: center;
 		padding-top: 10%;
 	}
 
 	.login-logo {
-		width: 200upx;
-		height: 150px;
+		width: 200rpx;
+		height: 150rpx;
 	}
 
 	.login-title {
-		font-size: 60upx;
+		font-size: 60rpx;
 		color: #000000;
 	}
 
@@ -109,7 +122,7 @@
 
 	.form {
 		width: 80%;
-		margin: 40upx auto;
+		margin: 40rpx auto;
 	}
 
 	.form-btn {
