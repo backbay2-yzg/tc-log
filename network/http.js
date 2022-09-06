@@ -22,20 +22,21 @@ export const tokenRequest = (options) => {
 			success: (res) => {
 				//返回的数据（不固定，看后端接口，这里是做了一个判断，如果不为true，用uni.showToast方法提示获取数据失败)
 				if (res.data.code === 401) {
-					let userInfo = JSON.parse(uni.getStorageSync("userInfo"));
-					if (userInfo) {
+					let userInfo = uni.getStorageSync("userInfo");
+					if (!!userInfo) {
+						console.log("401 true userInfo: " + userInfo)
 						login(userInfo).then(res => {
 							let token = res.data.token;
 							uni.setStorageSync("admin-token", token)
 							uni.showToast({
 								title: '重新登录成功',
-								icon: 'none'
 							})
 						})
-					}else{
+					} else {
+						console.log("401 false userInfo: " + userInfo)
 						uni.showToast({
 							title: '需要重新登录刷新token',
-							icon: 'none'
+							icon: 'error'
 						})
 					}
 				} else if (res.data.code === 200) {

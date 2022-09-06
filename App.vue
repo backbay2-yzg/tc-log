@@ -3,9 +3,9 @@
 		onLaunch: function() {
 			console.log('App Launch')
 			let token = uni.getStorageSync('admin-token')
-			if(!!token){
-				uni.switchTab({
-					url:'/pages/writelog/writelog'
+			if (!!token) {
+				uni.redirectTo({
+					url: '/pages/writelog/writelog'
 				})
 			}
 		},

@@ -8,19 +8,19 @@
  */
 export const httpCode = {
 	/** 成功 */
-	SUCCESS:200,
+	SUCCESS: 200,
 	/** 警告 */
-	WARN:301,
+	WARN: 301,
 	/**
 	 * jwt验证失败
 	 */
-	JWTFAIL:403,
+	JWTFAIL: 403,
 	/**
 	 * jwt过期重新请求用户的身份认证
 	 */
-	JWTEXPIRE:401,
+	JWTEXPIRE: 401,
 	/** 错误 */
-	ERROR:500,
+	ERROR: 500,
 };
 
 /**
@@ -31,4 +31,8 @@ export const httpContentType = {
 	JSON: "application/json;charset=utf-8",
 }
 
+export const USER_INFO = 'userinfo'
 export const ACCESS_TOKEN = 'admin-token'
+export const PROJECT_NAME_LIST = 'project-name-list'
+export const DAILY_TASK_TYPE_LIST = 'daily-task-type-list'
+export const DAILY_RECEIVE_LIST = 'daily-receive-list'
