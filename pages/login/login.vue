@@ -99,7 +99,12 @@
 								uni.setStorageSync(USER_INFO, userInfo)
 								let token = res.data.token;
 								uni.setStorageSync(ACCESS_TOKEN, token)
-								this.getFormDataInfo();
+								this.getDataInfo().then(()=>{
+									uni.switchTab({
+										url: '/pages/writelog/writelog'
+									})
+								})
+							
 							}
 						})
 					} else {
@@ -107,7 +112,16 @@
 					}
 				});
 			},
-			async getFormDataInfo() {
+			getDataInfo(){
+				 return new Promise((resolve, reject) => {
+					this.getFormDataInfo(resolve);
+				 }).catch(err => {
+					console.log(err);
+					reject();
+				});
+
+			},
+			async getFormDataInfo(resolve) {
 				await getProjectNames().then(res => {
 					let projectNames = [];
 					let projectsList = res.data.data;
@@ -141,7 +155,7 @@
 					uni.setStorageSync(DAILY_TASK_TYPE_LIST, [dailyTaskTypes])
 
 				});
-				await getDailyReceives().then(res => {
+				await  getDailyReceives().then(res => {
 					let dailyReceiveNames = [];
 					let dailyReceiveList = res.data.data;
 					for (let i = 3; i < dailyReceiveList.length; i++) {
@@ -158,10 +172,9 @@
 					}
 					uni.setStorageSync(DAILY_RECEIVE_LIST, dailyReceiveNames)
 				});
-				uni.switchTab({
-					url: '/pages/writelog/writelog'
-				})
+				resolve();
 			}
+		
 		}
 
 	}
@@ -205,7 +218,7 @@
 		/*让页面始终占浏览器可视区域总高度*/
 		height: 100vh;
 		// background: linear-gradient(#141e30, #243b55);
-		background-image: linear-gradient(to bottom, #a6c1ee, #243b55);
+		background-image: linear-gradient(to top, #55aaff, #ffaaff);
 	}
 
 	.login-box {

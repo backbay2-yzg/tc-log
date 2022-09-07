@@ -1,10 +1,11 @@
 <script>
+	import {ACCESS_TOKEN } from "@/common/constants.js"
 	export default {
 		onLaunch: function() {
 			console.log('App Launch')
-			let token = uni.getStorageSync('admin-token')
+			let token = uni.getStorageSync(ACCESS_TOKEN)
 			if (!!token) {
-				uni.redirectTo({
+				uni.switchTab({
 					url: '/pages/writelog/writelog'
 				})
 			}

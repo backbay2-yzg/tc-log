@@ -35,8 +35,11 @@ export const tokenRequest = (options) => {
 					} else {
 						console.log("401 false userInfo: " + userInfo)
 						uni.showToast({
-							title: '需要重新登录刷新token',
+							title: '您还未登录，请先登录',
 							icon: 'error'
+						})
+						uni.navigateTo({
+							url:'/pages/login/login'
 						})
 					}
 				} else if (res.data.code === 200) {
