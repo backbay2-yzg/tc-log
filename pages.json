@@ -18,7 +18,7 @@
 			"path": "pages/detaillog/detaillog",
 			"style": {
 				"navigationBarTitleText": "详情",
-				"enablePullDownRefresh": false
+				"enablePullDownRefresh": true
 			}
 		},
 		{
