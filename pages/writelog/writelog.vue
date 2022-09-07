@@ -51,13 +51,13 @@
 				<u--input v-else placeholder="请输入加班时间(小时)" border="surround" v-model="form.overTime" class="tc-flex-1"></u--input>
 				<u-switch v-model="isOverTimeInput" @change="swOverTimeChange" class="switch"></u-switch>
 			</u-form-item>
-			<u-form-item label="发送给" borderBottom labelWidth="70" @click="showReceive = true" ref="uTaskPicker">
+			<u-form-item label="发送给" borderBottom labelWidth="70" @click="clickDailyReceive">
 				<!-- <u--input v-model="dailyReceiveDisplayName" border="none" disabled disabledColor="#ffffff"
 					placeholder="请选择接收方"></u--input> -->
 				<u--textarea v-model="dailyReceiveDisplayName" placeholder="请选择接收方" disabled disabledColor="#ffffff" autoHeight confirmType="done"></u--textarea>
 			</u-form-item>
 			<u-form-item label="工作内容" prop="content" borderBottom labelWidth="70">
-				<u--textarea v-model="form.content" placeholder="请输入工作内容" count autoHeight :maxlength="255" confirmType="done"></u--textarea>
+				<u--textarea v-model="form.content" placeholder="请输入工作内容" count autoHeight :maxlength="255" confirmType="return"></u--textarea>
 			</u-form-item>
 		</u--form>
 		<view class="log-box">
@@ -320,10 +320,6 @@ export default {
 			console.log(this.form.dailyReceiveIdList);
 		},
 		openReceivePop() {
-			uni.showToast({
-				title: '数据加载中，请稍后...',
-				icon: 'none'
-			})
 			console.log('openReceivePop' + this.form.dailyReceiveIdList);
 			this.dailyReceiveNames.forEach(item => {
 				item.checked = false;
@@ -391,6 +387,13 @@ export default {
 			this.form.dailyReceiveIdList = [];
 			this.dailyReceiveDisplayName = '';
 			this.clearChecked();
+		},
+		clickDailyReceive(){
+			this.showReceive = true;
+			uni.showToast({
+				title: '数据加载中，请稍后...',
+				icon: 'none'
+			})
 		}
 	}
 };
