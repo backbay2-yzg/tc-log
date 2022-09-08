@@ -4,6 +4,7 @@ import {
 import {
 	ACCESS_TOKEN,
 	httpContentType,
+	USER_INFO
 } from '@/common/constants.js';
 import {
 	login
@@ -16,14 +17,14 @@ export const tokenRequest = (options) => {
 			method: options.method || 'GET', //请求方法：传入的方法或者默认是“GET”
 			data: options.data || {}, //传递参数：传入的参数或者默认传递空集合
 			header: options.header || {
-				'Authorization': "Bearer " + uni.getStorageSync('admin-token'),
+				'Authorization': "Bearer " + uni.getStorageSync(ACCESS_TOKEN),
 				'Content-Type': httpContentType.JSON
 			},
 			success: (res) => {
 				//返回的数据（不固定，看后端接口，这里是做了一个判断，如果不为true，用uni.showToast方法提示获取数据失败)
 				if (res.data.code === 401) {
-					let userInfo = uni.getStorageSync("userInfo");
-					if (!!userInfo) {
+					let userInfo = uni.getStorageSync(USER_INFO);
+					if (userInfo) {
 						console.log("401 true userInfo: " + userInfo)
 						login(userInfo).then(res => {
 							let token = res.data.token;
@@ -39,7 +40,7 @@ export const tokenRequest = (options) => {
 							icon: 'error'
 						})
 						uni.navigateTo({
-							url:'/pages/login/login'
+							url: '/pages/login/login'
 						})
 					}
 				} else if (res.data.code === 200) {
@@ -71,15 +72,14 @@ export const myRequest = (options) => {
 				'Content-Type': httpContentType.JSON
 			},
 			success: (res) => {
-				//返回的数据（不固定，看后端接口，这里是做了一个判断，如果不为true，用uni.showToast方法提示获取数据失败)
-				if (res.data.code != 200) {
-					return uni.showToast({
-						title: baseURL + options.url + '获取数据失败',
+				if (res.data.code === 200) {
+					resolve(res)
+				} else {
+					uni.showToast({
+						title: '获取数据失败',
 						icon: 'none'
 					})
 				}
-				// 如果不满足上述判断就输出数据
-				resolve(res)
 			},
 			// 这里的接口请求，如果出现问题就输出接口请求失败
 			fail: (err) => {
