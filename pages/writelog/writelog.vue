@@ -63,12 +63,13 @@
 		<view class="log-box">
 			<u-popup :show="showReceive" @close="showReceive = false" @open="openReceivePop" :round="10" closeable closeIconPos="top-right" closeOnClickOverlay>
 				<view class="popupBox">
-					<scroll-view scroll-y="true" style="height: 500rpx;" scroll-with-animation="true">
+					<!-- <u-search v-model="searchValue" :show-action="false" @change="searchChange" clearabled  placeholder="请输入姓名关键字"></u-search> -->
+					<scroll-view scroll-y="true" style="height: 500rpx;margin-top: 5px;" scroll-with-animation="true">
 						<u-checkbox-group size="27" borderBottom iconSize="18" iconPlacement="right" placement="column" @change="cbChange">
 							<u-checkbox
 								:customStyle="{ marginBottom: '16px' }"
 								v-for="(item, index) in dailyReceiveNames"
-								:key="index"
+								:key="item.id"
 								:label="item.name"
 								:name="item.id"
 								:checked="item.checked"
@@ -101,10 +102,12 @@
 
 <script>
 import { getProjectNames, getDailyTaskTypes, getDailyReceives, submitDailyLog } from '@/api/writelog.js';
-import { PROJECT_NAME_LIST, DAILY_TASK_TYPE_LIST, DAILY_RECEIVE_LIST } from '@/common/constants.js';
+import { PROJECT_NAME_LIST, DAILY_TASK_TYPE_LIST, DAILY_RECEIVE_LIST, LOG_FORM_DATA } from '@/common/constants.js';
 export default {
 	data() {
 		return {
+			searchValue: '',
+			searchPopShow:false,
 			//项目名称控制picker
 			showProjectPicker: false,
 			showTaskPicker: false,
@@ -119,25 +122,25 @@ export default {
 			dailyReceiveNames: null,
 			dailyReceiveDisplayName: '',
 			//任务名称
-			taskName: '开发',
+			taskName: '',
 			//项目名称
-			projectName: 'PJ_JL_PF',
+			projectName: '',
+			searchList:null,
 			form: {
 				//项目id
-				projectId: 22,
+				projectId: null,
 				//任务类型 开发 测试
-				taskType: '01',
+				taskType: '',
 				//日志日期
 				dailyDate: uni.$u.timeFormat(new Date(), 'yyyy-mm-dd'),
 				//工作时长
-				workTime: 7.5,
+				workTime: 0,
 				//加班时长
 				overTime: 0,
 				//工作内容
 				content: '',
 				//接收人
-				dailyReceiveIdList: ['331'],
-				dailyDateObj: new Date(uni.$u.timeFormat(new Date(), 'yyyy-mm-dd')).toISOString()
+				dailyReceiveIdList: []
 			},
 			rules: {
 				// projectName: {
@@ -156,12 +159,38 @@ export default {
 		};
 	},
 	onLoad() {
+
 		console.log('on load');
 		console.log(this.projectNames);
 		console.log(this.dailyTaskTypes);
 		console.log(this.dailyReceiveNames);
 		// 进来加载数据填充Form Data
 		this.loadFormDataInfo();
+
+		// if (!!logForm) {
+		// 	let tempForm = {
+		// 		//项目id
+		// 		projectId: logForm.projectId,
+		// 		//任务类型 开发 测试
+		// 		taskType: logForm.taskType,
+		// 		//日志日期
+		// 		dailyDate: uni.$u.timeFormat(new Date(), 'yyyy-mm-dd'),
+		// 		//工作时长
+		// 		workTime: logForm.workTime,
+		// 		//加班时长
+		// 		overTime: logForm.overTime,
+		// 		//工作内容
+		// 		content: '',
+		// 		//接收人
+		// 		dailyReceiveIdList: logForm.dailyReceiveIdList
+		// 	};
+		// 	this.form = tempForm;
+			// console.log(
+			// this.projectNames.filter(r=>{
+			// 	r.id = logForm.projectId
+			// })
+			// )
+		// }
 	},
 	onReady() {
 		console.log('App Ready');
@@ -178,12 +207,23 @@ export default {
 	onHide: function() {
 		console.log('App Hide');
 	},
+	watch: {
+		searchValue(newValue, oldValue) {
+			if(newValue){
+				this.searchPopShow = true;
+			}else{
+				this.searchPopShow = false;
+			}
+		}
+	},
+	computed: {},
 	methods: {
-		loadFormDataInfo(){
+		loadFormDataInfo() {
 			if (this.projectNames == null || this.dailyTaskTypes == null || this.dailyReceiveNames == null) {
 				let projectNameList = uni.getStorageSync(PROJECT_NAME_LIST);
 				let dailyTaskTypeList = uni.getStorageSync(DAILY_TASK_TYPE_LIST);
 				let dailyReceiveList = uni.getStorageSync(DAILY_RECEIVE_LIST);
+
 				if (!!projectNameList && !!dailyTaskTypeList && !!dailyReceiveList) {
 					console.log('load data');
 					this.projectNames = projectNameList;
@@ -191,6 +231,28 @@ export default {
 					this.dailyReceiveNames = dailyReceiveList;
 					//加载数据之后界面加载接收人
 					this.loadReceiverName();
+					let logForm = uni.getStorageSync(LOG_FORM_DATA);
+					if (!!logForm) {
+
+							//项目id
+							this.form.projectId= logForm.projectId;
+							//任务类型 开发 测试
+							this.form.taskType=logForm.taskType;
+							//日志日期
+							this.form.dailyDate= uni.$u.timeFormat(new Date(), 'yyyy-mm-dd');
+							//工作时长
+							this.form.workTime= logForm.workTime;
+							//加班时长
+							this.form.overTime= logForm.overTime;
+							//工作内容
+							this.form.content= '';
+							//接收人
+							this.form.dailyReceiveIdList= logForm.dailyReceiveIdList;
+
+						console.log(this.projectNames);
+						
+						
+					}
 				} else {
 					console.log('remote load data');
 					this.getFormDataInfo();
@@ -198,10 +260,11 @@ export default {
 			}
 		},
 		//缓存被清理之后 切换页面就可以恢复数据
-		restoreFormDataInfo(){
+		restoreFormDataInfo() {
 			let projectNameList = uni.getStorageSync(PROJECT_NAME_LIST);
 			let dailyTaskTypeList = uni.getStorageSync(DAILY_TASK_TYPE_LIST);
 			let dailyReceiveList = uni.getStorageSync(DAILY_RECEIVE_LIST);
+			let logForm = uni.getStorageSync(LOG_FORM_DATA);
 			if (!(!!projectNameList && !!dailyTaskTypeList && !!dailyReceiveList)) {
 				this.projectNames = null;
 				this.dailyTaskTypes = null;
@@ -211,7 +274,7 @@ export default {
 		},
 		async getFormDataInfo() {
 			await getProjectNames().then(res => {
-				let arr = [];
+				let arr = new Array();
 				let projectsList = res.data.data;
 				for (let i in projectsList) {
 					//项目组id
@@ -224,11 +287,11 @@ export default {
 					};
 					arr.push(obj);
 				}
-				this.projectNames = [arr];
+				this.projectNames = arr;
 				uni.setStorageSync(PROJECT_NAME_LIST, this.projectNames);
 			});
 			await getDailyTaskTypes().then(res => {
-				let arr = [];
+				let arr = new Array();
 				let dailyTaskTypeList = res.data.data;
 				for (let i in dailyTaskTypeList) {
 					//项目组id
@@ -241,11 +304,11 @@ export default {
 					};
 					arr.push(obj);
 				}
-				this.dailyTaskTypes = [arr];
+				this.dailyTaskTypes = arr;
 				uni.setStorageSync(DAILY_TASK_TYPE_LIST, this.dailyTaskTypes);
 			});
 			await getDailyReceives().then(res => {
-				let arr = [];
+				let arr = new Array();
 				let dailyReceiveList = res.data.data;
 				// for (let i = 3; i < dailyReceiveList.length; i++) {
 				for (let i in dailyReceiveList) {
@@ -321,6 +384,7 @@ export default {
 		},
 		openReceivePop() {
 			console.log('openReceivePop' + this.form.dailyReceiveIdList);
+			this.searchValue = ''
 			this.dailyReceiveNames.forEach(item => {
 				item.checked = false;
 			});
@@ -335,26 +399,33 @@ export default {
 			}
 		},
 		checkboxConfirm() {
-			let objArr = [];
+
 			console.log('当前值为: ' + this.form.dailyReceiveIdList);
 			this.showReceive = false;
 			this.loadReceiverName();
 		},
-
 		submit() {
 			console.log('写日志提交:' + JSON.stringify(this.form));
 			let dataFrom = [];
 			dataFrom.push(this.form);
-			submitDailyLog(dataFrom).then(res => {
-				if (res.data.code === 200) {
-					//清空内容
-					this.form.content = ''
-					uni.showToast({
-						title: '日志提交成功',
-						duration: 2000
-					});
-				}
+			//test
+			this.form.content = '';
+			uni.setStorageSync(LOG_FORM_DATA, this.form);
+			uni.showToast({
+				title: '日志提交成功',
+				duration: 2000
 			});
+			// submitDailyLog(dataFrom).then(res => {
+			// 	if (res.data.code === 200) {
+			// 		//清空内容
+			// 		this.form.content = '';
+			// 		uni.setStorageSync(LOG_FORM_DATA,this.form)
+			// 		uni.showToast({
+			// 			title: '日志提交成功',
+			// 			duration: 2000
+			// 		});
+			// 	}
+			// });
 		},
 		loadReceiverName() {
 			let objArr = [];
@@ -388,12 +459,21 @@ export default {
 			this.dailyReceiveDisplayName = '';
 			this.clearChecked();
 		},
-		clickDailyReceive(){
+		clickDailyReceive() {
 			this.showReceive = true;
 			uni.showToast({
 				title: '数据加载中，请稍后...',
 				icon: 'none'
-			})
+			});
+		},
+		getSearchData(value) {
+			console.log(value);
+			// console.log(this.dailyReceiveNames);
+			this.searchList =  this.dailyReceiveNames.filter(r => r.name.includes(value));
+		},
+		searchChange(e) {
+			console.log(e);
+			this.getSearchData(e);
 		}
 	}
 };
