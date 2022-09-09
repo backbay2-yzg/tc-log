@@ -68,7 +68,7 @@
 							</u-col>
 							<u-col span="6">
 								<view class="demo-layout ">
-									<u--text :text="item.createTime"></u--text>
+									<u--text :text="item.overTime"></u--text>
 								</view>
 							</u-col>
 						</u-row>
@@ -259,9 +259,7 @@
 	}
 
 	.log-item {
-		padding-left: 20rpx;
-		padding-right: 20rpx;
-		padding-top: 20rpx;
+		padding: 20rpx;
 		background-color: #fffefa;
 		margin: 20rpx;
 		border: 1rpx solid white;

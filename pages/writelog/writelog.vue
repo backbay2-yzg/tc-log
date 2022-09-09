@@ -173,16 +173,16 @@
 					},
 					workTime: {
 						type: 'number',
-						min: 1,
+						min: 0,
 						required: true,
-						message: '请选择上班时长，最小是1小时',
+						message: '请选择上班时长',
 						trigger: ['blur', 'change']
 					},
 					overTime: {
 						type: 'number',
 						min: 0,
 						required: true,
-						message: '请选择加班时间',
+						message: '请选择加班时长',
 						trigger: ['blur', 'change']
 					},
 					content: {
