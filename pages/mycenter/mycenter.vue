@@ -50,9 +50,10 @@
 				this.userInfo = uni.getStorageSync(USER_INFO)
 			},
 			clearDataCache() {
-				uni.removeStorageSync(PROJECT_NAME_LIST);
-				uni.removeStorageSync(DAILY_TASK_TYPE_LIST);
-				uni.removeStorageSync(DAILY_RECEIVE_LIST);
+				// uni.removeStorageSync(PROJECT_NAME_LIST);
+				// uni.removeStorageSync(DAILY_TASK_TYPE_LIST);
+				// uni.removeStorageSync(DAILY_RECEIVE_LIST);
+				uni.clearStorageSync();
 				uni.showToast({
 					title: '数据缓存已清空',
 					icon: 'success'
