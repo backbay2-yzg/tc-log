@@ -42,7 +42,11 @@
 			<u-form-item label="工作内容" prop="content" borderBottom labelWidth="70">
 				<u--textarea v-model="form.content" placeholder="请输入工作内容" count autoHeight :maxlength="255"
 					confirmType="return"></u--textarea>
-
+				<view @click.stop="selectContent">
+					<!-- <u-button slot="right" text="清空" type="success" size="mini" :disabled="cleanDisabled">清空</u-button> -->
+					<u-button text="选择" size="mini" class="clean-btn" type="primary">
+					</u-button>
+				</view>
 			</u-form-item>
 
 			<u-form-item label="发送给" borderBottom labelWidth="70" @click="clickDailyReceive">
@@ -74,8 +78,7 @@
 						<u-checkbox-group size="27" borderBottom iconSize="18" iconPlacement="right" placement="column"
 							@change="cbChange">
 							<u-checkbox :customStyle="{ marginBottom: '16px' }" v-for="(item, index) in searchList"
-								:key="item.id" :label="item.name" :name="item.id" :checked="item.checked"
-								shape="circle"></u-checkbox>
+								:key="item.id" :label="item.name" :name="item.id" shape="circle"></u-checkbox>
 						</u-checkbox-group>
 					</scroll-view>
 				</view>
@@ -86,7 +89,21 @@
 					<u-button type="primary" color="#909399" text="清空" @click="checkboxDataClear"></u-button>
 				</view> -->
 			</u-popup>
-
+			<u-popup :show="showContent" @close="showContent = false" @open="openContentPop" :round="10" closeable
+				closeIconPos="top-right" closeOnClickOverlay>
+				<view class="popupBox">
+					<u-search v-model="searchContentValue" :show-action="false" @change="searchContentChange" clearabled
+						placeholder="请输入内容关键字"></u-search>
+					<scroll-view scroll-y="true" style="height: 500rpx;margin-top: 5px;" scroll-with-animation="true">
+						<u-checkbox-group size="27" borderBottom iconSize="18" iconPlacement="right" placement="column"
+							@change="cbContentChange">
+							<u-checkbox :customStyle="{ marginBottom: '16px' }"
+								v-for="(item, index) in searchContentList" :key="index" :label="item" :name="item"
+								shape="circle"></u-checkbox>
+						</u-checkbox-group>
+					</scroll-view>
+				</view>
+			</u-popup>
 			<u-datetime-picker :show="showDate" :value="form.dailyDate" mode="date" closeOnClickOverlay
 				@confirm="datePickerConfirm" @cancel="datePickerClose" @close="datePickerClose"></u-datetime-picker>
 
@@ -106,14 +123,19 @@
 		PROJECT_NAME_LIST,
 		DAILY_TASK_TYPE_LIST,
 		DAILY_RECEIVE_LIST,
-		LOG_FORM_DATA
+		LOG_FORM_DATA,
+		LOG_CONTENT_LIST
 	} from '@/common/constants.js';
 	export default {
 		data() {
 			return {
+				showContent: false,
+				searchContentValue: '',
+				searchContentList: [],
+				dailyContentList: [],
+				dailyContentSet: new Set(),
 				cleanDisabled: false,
 				searchValue: '',
-				searchPopShow: false,
 				//项目名称控制picker
 				showProjectPicker: false,
 				showTaskPicker: false,
@@ -195,6 +217,11 @@
 			};
 		},
 		onLoad() {
+			let contentList = uni.getStorageSync(LOG_CONTENT_LIST)
+			if (contentList) {
+				console.log(contentList)
+				this.dailyContentList = contentList;
+			}
 
 			console.log('on load');
 			// console.log(this.projectNames);
@@ -248,11 +275,7 @@
 		},
 		watch: {
 			searchValue(newValue, oldValue) {
-				if (newValue) {
-					this.searchPopShow = true;
-				} else {
-					this.searchPopShow = false;
-				}
+
 			}
 		},
 		computed: {},
@@ -530,11 +553,20 @@
 							title: '日志提交成功',
 							duration: 2000
 						});
+
+						console.log(this.form.content)
+						this.dailyContentSet = new Set(this.dailyContentList)
+						this.dailyContentSet.add(this.form.content)
+						uni.setStorageSync(LOG_CONTENT_LIST, Array.from(this.dailyContentSet))
+
+						this.dailyContentList = Array.from(this.dailyContentSet)
+
 						submitDailyLog(dataFrom).then(res => {
 							if (res.data.code === 200) {
 								//清空内容
 								this.form.content = '';
 								uni.setStorageSync(LOG_FORM_DATA, this.form)
+
 								uni.showToast({
 									title: '日志提交成功',
 									duration: 2000
@@ -599,6 +631,24 @@
 			searchChange(e) {
 				console.log(e);
 				this.getSearchData(e);
+			},
+			selectContent() {
+				console.log("selectContent")
+				this.showContent = true;
+			},
+			openContentPop() {
+				this.searchContentValue = ''
+				this.searchContentList = this.dailyContentList;
+			},
+			searchContentChange(e) {
+				this.searchContentList = this.dailyContentList.filter(r => r.includes(e));
+			},
+			cbContentChange(e) {
+				console.log(e)
+				if (e) {
+					this.form.content = e.toString()
+					this.showContent = false
+				}
 			}
 		}
 	};

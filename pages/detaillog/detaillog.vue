@@ -10,7 +10,9 @@
 				<view class="u-demo-block">
 					<view class="log-item-title">
 						<text class="u-demo-block__title ">{{ item.createUserName }}的研发日报</text>
+						<text class="tc-small">{{item.updateTime}}</text>
 					</view>
+					<u-line></u-line>
 					<view class="u-demo-block__content">
 						<u-row customStyle="margin-bottom: 10rpx">
 							<u-col span="6">
@@ -20,7 +22,7 @@
 							</u-col>
 							<u-col span="6">
 								<view class="demo-layout ">
-									<u--text :text="item.updateTime"></u--text>
+									<u--text :text="item.dailyDate"></u--text>
 								</view>
 							</u-col>
 						</u-row>
@@ -256,6 +258,11 @@
 <style>
 	.tc-page {
 		background-color: #99a9bf;
+	}
+
+	.tc-small {
+		font-size: .1em;
+		padding-left: 12rpx;
 	}
 
 	.log-item {

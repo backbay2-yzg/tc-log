@@ -95,18 +95,19 @@
 						login(this.form).then(res => {
 							// console.log('res' + JSON.stringify(res));
 							this.isLogining = false;
-							let userInfo = {};
-							userInfo.username = this.form.username;
-							userInfo.password = this.form.password;
-							uni.setStorageSync(USER_INFO, userInfo);
-							let token = res.data.token;
-							uni.setStorageSync(ACCESS_TOKEN, token);
-							this.getDataInfo().then(() => {
-								uni.switchTab({
-									url: '/pages/writelog/writelog'
+							if (res.data.code === 200) {
+								let userInfo = {};
+								userInfo.username = this.form.username;
+								userInfo.password = this.form.password;
+								uni.setStorageSync(USER_INFO, userInfo);
+								let token = res.data.token;
+								uni.setStorageSync(ACCESS_TOKEN, token);
+								this.getDataInfo().then(() => {
+									uni.switchTab({
+										url: '/pages/writelog/writelog'
+									});
 								});
-							});
-
+							}
 						}).catch(err => {
 							this.isLogining = false;
 						});

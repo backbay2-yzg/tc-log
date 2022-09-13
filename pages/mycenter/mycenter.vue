@@ -1,9 +1,17 @@
 <template>
-	<view class="page">
-		<u-button @click="clearDataCache" type="primary" color="#0ab99c" text="清理数据缓存" class="tc-mg20"></u-button>
-		<u-button @click="clearUserInfo" type="primary" color="#0ab99c" text="清理用户信息" class="tc-mg20"></u-button>
-		<u-button @click="logout" type="primary" color="#0ab99c" text="退出登录" class="tc-mg20">
-		</u-button>
+	<view class="myContent">
+		<view class="header">
+			<image :src="avatar" mode="aspectFit" class="login-logo"></image>
+			<text class="myInformation"><b>牛马编号：</b>{{userInfo.username}}</text>
+			<text class="myInformation"><b>个性签名：</b>牛马多，任务多，多多益善</text>
+		</view>
+		<view class="liebiao">
+			<u-album :urls="urls" keyName="src2" multiple-size='100'></u-album>
+		</view>
+		<view class="tc-foot">
+			<u-button @click="logout" type="primary" color="#0ab99c" text="退出登录" class="tc-mg20">
+			</u-button>
+		</view>
 	</view>
 </template>
 
@@ -17,9 +25,30 @@
 	} from '@/common/constants.js'
 	export default {
 		data() {
-			return {};
+			return {
+				avatar: '../../static/logo.png',
+				userInfo: {},
+				urls: [
+					'https://cdn.uviewui.com/uview/album/1.jpg',
+					'https://cdn.uviewui.com/uview/album/2.jpg',
+					'https://cdn.uviewui.com/uview/album/3.jpg',
+					'https://cdn.uviewui.com/uview/album/4.jpg',
+					'https://cdn.uviewui.com/uview/album/5.jpg',
+					'https://cdn.uviewui.com/uview/album/6.jpg',
+					'https://cdn.uviewui.com/uview/album/7.jpg',
+					'https://cdn.uviewui.com/uview/album/8.jpg',
+					'https://cdn.uviewui.com/uview/album/9.jpg',
+					'https://cdn.uviewui.com/uview/album/10.jpg',
+				],
+			}
+		},
+		onLoad() {
+			this.getMyInformation();
 		},
 		methods: {
+			getMyInformation() {
+				this.userInfo = uni.getStorageSync(USER_INFO)
+			},
 			clearDataCache() {
 				uni.removeStorageSync(PROJECT_NAME_LIST);
 				uni.removeStorageSync(DAILY_TASK_TYPE_LIST);
@@ -47,19 +76,48 @@
 				})
 			}
 		}
-	};
+
+	}
 </script>
 
 <style>
-	.page {
+	page {
+		background: #eaeaea;
+	}
+
+	.header {
 		display: flex;
 		flex-direction: column;
-		padding: 0 40upx;
+		align-items: center;
+		padding: 20rpx;
 	}
 
-	.tc-mg20 {
-		margin: 20upx 0;
+	.myInformation {
+		padding: 5rpx;
 	}
 
-	.logoutBtn {}
+	.login-logo {
+		width: 150rpx;
+		height: 150rpx;
+		padding: 20rpx;
+
+	}
+
+	.liebiao {
+		display: flex;
+		height: 650rpx;
+		align-items: center;
+		background: #fff;
+		width: 90%;
+		border-radius: 10px;
+		flex-direction: column;
+		justify-content: center;
+		padding: 10rpx;
+		margin: 0 20rpx 10rpx 20rpx;
+	}
+
+	.tc-foot {
+		padding: 2%;
+		margin: 10rpx 20rpx 20rpx 20rpx;
+	}
 </style>

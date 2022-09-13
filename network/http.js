@@ -73,17 +73,23 @@ export const myRequest = (options) => {
 			},
 			success: (res) => {
 				if (res.data.code === 200) {
-					resolve(res)
+					// resolve(res)
 				} else {
+					console.log(res.data.msg)
 					uni.showToast({
-						title: '获取数据失败',
-						icon: 'none'
+						title: '登录失败：' + res.data.msg,
+						icon: 'error'
 					})
 				}
+				resolve(res)
 			},
 			// 这里的接口请求，如果出现问题就输出接口请求失败
 			fail: (err) => {
 				console.log(err)
+				uni.showToast({
+					title: '请求出错了',
+					icon: 'error'
+				})
 				reject(err)
 			}
 		})
